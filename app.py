@@ -14,8 +14,18 @@ UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__name__)), 'upload
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+import json
+
 # Initialize Firebase Admin SDK
-cred = credentials.Certificate("student-portal-9f4f6-firebase-adminsdk-fbsvc-614a27b548.json")
+firebase_creds_json = os.environ.get('FIREBASE_CREDENTIALS')
+if firebase_creds_json:
+    # Running on Vercel
+    cred_dict = json.loads(firebase_creds_json)
+    cred = credentials.Certificate(cred_dict)
+else:
+    # Running locally
+    cred = credentials.Certificate("student-portal-9f4f6-firebase-adminsdk-fbsvc-614a27b548.json")
+
 firebase_admin.initialize_app(cred)
 db = firestore.client(database_id="native-db")
 login_manager = LoginManager()
