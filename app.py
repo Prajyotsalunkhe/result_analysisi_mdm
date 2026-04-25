@@ -10,9 +10,14 @@ from firebase_admin import credentials, firestore
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'super-secret-key-for-development' # Change in production
 
-UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__name__)), 'uploads')
+if os.environ.get('FIREBASE_CREDENTIALS'):
+    # Vercel has a read-only filesystem, so we must use /tmp for uploads
+    UPLOAD_FOLDER = '/tmp'
+else:
+    UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 import json
 
