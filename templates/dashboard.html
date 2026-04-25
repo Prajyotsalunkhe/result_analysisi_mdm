@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-grid">
+    <!-- Block 1: Result Analysis -->
+    <div class="dash-card glass-panel fade-in-up" style="animation-delay: 0.1s;">
+        <div class="card-header">
+            <h3>Result Analysis</h3>
+            <span class="badge">Upload</span>
+        </div>
+        <p class="card-desc">Upload your result PDF for processing.</p>
+        
+        <form action="{{ url_for('submit_result') }}" method="POST" enctype="multipart/form-data" class="modern-form">
+            <div class="form-row">
+                <div class="input-group half">
+                    <label>Class</label>
+                    <input type="text" name="class" required placeholder="e.g. TE-1">
+                </div>
+                <div class="input-group half">
+                    <label>Roll No</label>
+                    <input type="text" name="roll_no" required placeholder="e.g. 101">
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label>Department</label>
+                <select name="department" required>
+                    <option value="" disabled selected>Select Department</option>
+                    <option value="CSE">CSE</option>
+                    <option value="CSE(AIML)">CSE (AIML)</option>
+                    <option value="ENTC">ENTC</option>
+                    <option value="CIVIL">CIVIL</option>
+                    <option value="MECHANICAL">MECHANICAL</option>
+                </select>
+            </div>
+            
+            <div class="input-group file-upload-group">
+                <label>Upload Result PDF</label>
+                <input type="file" name="result_pdf" accept="application/pdf" required class="file-input">
+            </div>
+            
+            <button type="submit" class="btn-primary">Submit Result</button>
+        </form>
+
+        {% if results %}
+        <div class="submissions-list mt-2">
+            <h4>Recent Uploads</h4>
+            <ul>
+                {% for r in results %}
+                    <li>{{ r.pdf_filename }} ({{ r.department }})</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Block 2: Minor Degree Allocation -->
+    <div class="dash-card glass-panel fade-in-up" style="animation-delay: 0.2s;">
+        <div class="card-header">
+            <h3>Minor Degree Allocation</h3>
+            <span class="badge">Apply</span>
+        </div>
+        <p class="card-desc">Select your preferences for minor degree allocation.</p>
+        
+        <form action="{{ url_for('submit_mdm') }}" method="POST" class="modern-form" id="mdm-form">
+            <div class="input-group">
+                <label>PRN No</label>
+                <input type="text" name="prn_no" required placeholder="Enter PRN">
+            </div>
+            
+            <div class="input-group">
+                <label>Current Department</label>
+                <select name="current_department" id="current_dept" required>
+                    <option value="" disabled selected>Select Current Department</option>
+                    <option value="CSE">CSE</option>
+                    <option value="CSE(AIML)">CSE (AIML)</option>
+                    <option value="ENTC">ENTC</option>
+                    <option value="CIVIL">CIVIL</option>
+                    <option value="MECHANICAL">MECHANICAL</option>
+                </select>
+            </div>
+            
+            <div class="preferences-container" id="preferences-container" style="display: none;">
+                <div class="input-group">
+                    <label>Preference 1</label>
+                    <select name="preference_1" class="pref-select" required>
+                        <option value="" disabled selected>Select Pref 1</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Preference 2</label>
+                    <select name="preference_2" class="pref-select" required>
+                        <option value="" disabled selected>Select Pref 2</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Preference 3</label>
+                    <select name="preference_3" class="pref-select" required>
+                        <option value="" disabled selected>Select Pref 3</option>
+                    </select>
+                </div>
+                <div class="input-group" id="pref-4-group">
+                    <label>Preference 4</label>
+                    <select name="preference_4" class="pref-select" id="pref-4-select">
+                        <option value="" disabled selected>Select Pref 4</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn-primary mt-1">Submit Application</button>
+            </div>
+        </form>
+
+        {% if mdm %}
+        <div class="submissions-list mt-2">
+            <h4>Your Application</h4>
+            <ul>
+                {% for m in mdm %}
+                    <li>{{ m.current_department }} -> {{ m.preference_1 }}, {{ m.preference_2 }}, {{ m.preference_3 }} 
+                        {% if m.preference_4 %}, {{ m.preference_4 }}{% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
