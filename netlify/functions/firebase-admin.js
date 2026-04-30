@@ -14,3 +14,9 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 // Now you can export 'db' or other services to use in your functions
+exports.handler = async function (event, context) {
+    return {
+        statusCode: 200,
+        body: JSON.stringify({ message: "Firebase Admin is initialized" }),
+    };
+};
