@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/faculty_css/style.css">
+</head>
+<body>
+    <nav class="navbar glass" style="margin: 1rem; border-radius: 12px;">
+        <a href="/faculty_dashboard" class="nav-brand">Faculty Portal</a>
+        <div>
+            <button id="logoutBtn" class="btn btn-outline">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <h1>Welcome to the Faculty Dashboard</h1>
+            <p>Select an option below to manage operations.</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <a href="/mdm" class="dashboard-card glass">
+                <div class="dashboard-icon">📊</div>
+                <h2>MDM Allocation</h2>
+                <p>View and manage Minor Degree Program preferences submitted by students.</p>
+            </a>
+
+            <a href="/results_view" class="dashboard-card glass">
+                <div class="dashboard-icon">📈</div>
+                <h2>Result Analysis</h2>
+                <p>Analyze processed student results extracted from COE PDF reports.</p>
+            </a>
+        </div>
+    </div>
+
+    <script src="/static/faculty_js/app.js"></script>
+    <script>
+        // Check if logged in (simple client-side check)
+        if (localStorage.getItem('loggedIn') !== 'true') {
+            window.location.href = '/faculty_login';
+        }
+    </script>
+</body>
+</html>

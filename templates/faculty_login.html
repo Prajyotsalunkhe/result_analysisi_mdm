@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Portal Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/faculty_css/style.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card glass">
+            <div class="login-header">
+                <h1>Faculty Portal</h1>
+                <p>Sign in to manage MDM allocations and analyze results.</p>
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" id="username" name="username" class="form-control" placeholder="Enter username (admin)" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Enter password (admin)" required>
+                </div>
+                
+                <div id="loginError" class="text-center text-error hidden mb-4" style="color: var(--error); font-size: 0.875rem;">
+                    Invalid credentials. Please try again.
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <span>Sign In</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/faculty_js/app.js"></script>
+</body>
+</html>

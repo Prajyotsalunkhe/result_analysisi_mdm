@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MDM Allocation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/faculty_css/style.css">
+</head>
+<body>
+    <nav class="navbar glass" style="margin: 1rem; border-radius: 12px;">
+        <a href="/faculty_dashboard" class="nav-brand">← Back to Dashboard</a>
+        <div style="font-weight: 600;">MDM Allocation</div>
+        <div>
+            <button id="logoutBtn" class="btn btn-outline">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h1>MDM Preferences</h1>
+            <button id="refreshMdmBtn" class="btn btn-primary">Refresh Data</button>
+        </div>
+        
+        <div class="glass" style="padding: 1.5rem;">
+            <div id="mdmLoader" class="loader"></div>
+            
+            <div id="mdmError" class="text-error hidden text-center" style="color: var(--error);">
+                Failed to load data. Make sure Firebase is configured properly.
+            </div>
+
+            <div id="mdmEmpty" class="text-muted hidden text-center" style="padding: 2rem 0;">
+                No MDM preferences found in the database.
+            </div>
+
+            <div class="table-container hidden" id="mdmTableContainer">
+                <table id="mdmTable">
+                    <thead>
+                        <tr id="mdmTableHead">
+                            <!-- Dynamic headers -->
+                        </tr>
+                    </thead>
+                    <tbody id="mdmTableBody">
+                        <!-- Dynamic rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/faculty_js/app.js"></script>
+    <script>
+        if (localStorage.getItem('loggedIn') !== 'true') {
+            window.location.href = '/faculty_login';
+        }
+        document.addEventListener('DOMContentLoaded', fetchMdmData);
+        document.getElementById('refreshMdmBtn').addEventListener('click', fetchMdmData);
+    </script>
+</body>
+</html>

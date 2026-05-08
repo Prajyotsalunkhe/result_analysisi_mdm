@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/faculty_css/style.css">
+</head>
+<body>
+    <nav class="navbar glass" style="margin: 1rem; border-radius: 12px;">
+        <a href="/faculty_dashboard" class="nav-brand">← Back to Dashboard</a>
+        <div style="font-weight: 600;">Result Analysis</div>
+        <div>
+            <button id="logoutBtn" class="btn btn-outline">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h1>Extracted Student Results</h1>
+            <button id="refreshResultsBtn" class="btn btn-primary">Refresh Data</button>
+        </div>
+        
+        <div class="glass" style="padding: 1.5rem;">
+            <div id="resultsLoader" class="loader"></div>
+            
+            <div id="resultsError" class="text-error hidden text-center" style="color: var(--error);">
+                Failed to load results. Make sure Firebase is configured properly.
+            </div>
+
+            <div id="resultsEmpty" class="text-muted hidden text-center" style="padding: 2rem 0;">
+                No results found. Please upload PDFs via the analyzer to populate data.
+            </div>
+
+            <div class="table-container hidden" id="resultsTableContainer">
+                <table id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th>PRN</th>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Semester</th>
+                            <th>Total Marks</th>
+                            <th>Percentage</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTableBody">
+                        <!-- Dynamic rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/faculty_js/app.js"></script>
+    <script>
+        if (localStorage.getItem('loggedIn') !== 'true') {
+            window.location.href = '/faculty_login';
+        }
+        document.addEventListener('DOMContentLoaded', fetchResultsData);
+        document.getElementById('refreshResultsBtn').addEventListener('click', fetchResultsData);
+    </script>
+</body>
+</html>
