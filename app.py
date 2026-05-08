@@ -18,12 +18,8 @@ from mdm_logic import seat_allotment
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'super-secret-key-for-development' # Change in production
 
-if os.environ.get('FIREBASE_CREDENTIALS'):
-    # Vercel has a read-only filesystem, so we must use /tmp for uploads
-    UPLOAD_FOLDER = '/tmp'
-else:
-    UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
-    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# Always use /tmp for file uploads (works on both local and cloud environments)
+UPLOAD_FOLDER = '/tmp'
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
