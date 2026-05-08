@@ -10,6 +10,10 @@ from models import User, ResultAnalysis, MinorDegreeApplication
 import firebase_admin
 from firebase_admin import credentials, firestore
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load environment variables from .env when running locally
+load_dotenv()
 
 # Import faculty modules
 from extractor import extract_result_data
@@ -20,18 +24,25 @@ app.config['SECRET_KEY'] = 'super-secret-key-for-development' # Change in produc
 
 # Always use /tmp for file uploads (works on both local and cloud environments)
 UPLOAD_FOLDER = '/tmp'
-
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Initialize Firebase Admin SDK
 firebase_creds_json = os.environ.get('FIREBASE_CREDENTIALS')
+firebase_creds_path = os.environ.get('FIREBASE_CREDENTIALS_PATH')
+local_firebase_file = "student-portal-9f4f6-firebase-adminsdk-fbsvc-614a27b548.json"
+
 if firebase_creds_json:
-    # Running on Vercel
     cred_dict = json.loads(firebase_creds_json)
     cred = credentials.Certificate(cred_dict)
+elif firebase_creds_path and os.path.exists(firebase_creds_path):
+    cred = credentials.Certificate(firebase_creds_path)
+elif os.path.exists(local_firebase_file):
+    cred = credentials.Certificate(local_firebase_file)
 else:
-    # Running locally
-    cred = credentials.Certificate("student-portal-9f4f6-firebase-adminsdk-fbsvc-614a27b548.json")
+    raise RuntimeError(
+        "Firebase credentials not found. Set FIREBASE_CREDENTIALS or FIREBASE_CREDENTIALS_PATH for deployment, "
+        "or add the local JSON file for development."
+    )
 
 if not firebase_admin._apps:
     firebase_admin.initialize_app(cred)
