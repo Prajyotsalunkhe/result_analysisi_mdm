@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="max-width: 800px; margin: 0 auto;">
+    <div style="margin-bottom: 2rem;">
+        <a href="{{ url_for('dashboard') }}" class="btn-outline">← Back to Dashboard</a>
+    </div>
+
+    <div class="dash-card glass-panel fade-in-up">
+        <div class="card-header">
+            <h3>Result Analysis</h3>
+            <span class="badge">Upload</span>
+        </div>
+        <p class="card-desc">Upload your result PDF for processing.</p>
+        
+        <form action="{{ url_for('submit_result') }}" method="POST" enctype="multipart/form-data" class="modern-form">
+            <div class="form-row">
+                <div class="input-group half">
+                    <label>Class</label>
+                    <input type="text" name="class" required placeholder="e.g. TE-1">
+                </div>
+                <div class="input-group half">
+                    <label>Roll No</label>
+                    <input type="text" name="roll_no" required placeholder="e.g. 101">
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label>Department</label>
+                <select name="department" required>
+                    <option value="" disabled selected>Select Department</option>
+                    <option value="CSE">CSE</option>
+                    <option value="CSE(AIML)">CSE (AIML)</option>
+                    <option value="ENTC">ENTC</option>
+                    <option value="CIVIL">CIVIL</option>
+                    <option value="MECHANICAL">MECHANICAL</option>
+                </select>
+            </div>
+            
+            <div class="input-group file-upload-group">
+                <label>Upload Result PDF</label>
+                <input type="file" name="result_pdf" accept="application/pdf" required class="file-input">
+            </div>
+            
+            <button type="submit" class="btn-primary">Submit Result</button>
+        </form>
+
+        {% if results %}
+        <div class="submissions-list mt-2">
+            <h4>Recent Uploads</h4>
+            <div class="glass-table-container">
+                <table class="glass-table">
+                    <thead>
+                        <tr>
+                            <th>Filename</th>
+                            <th>Dept</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in results %}
+                            <tr>
+                                <td>{{ r.pdf_filename }}</td>
+                                <td>{{ r.department }}</td>
+                                <td>
+                                    {% if r.summary %}
+                                        <span class="status-chip success">Analyzed</span>
+                                    {% else %}
+                                        <span class="status-chip warning">Processing</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

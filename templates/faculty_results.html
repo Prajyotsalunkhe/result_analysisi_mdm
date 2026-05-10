@@ -10,19 +10,20 @@
 <body>
     <nav class="navbar glass" style="margin: 1rem; border-radius: 12px;">
         <a href="/faculty_dashboard" class="nav-brand">← Back to Dashboard</a>
-        <div style="font-weight: 600;">Result Analysis</div>
-        <div>
+        <div style="font-weight: 600;">Result Analysis System</div>
+        <div style="display: flex; gap: 1rem;">
+            <button id="downloadResultsExcelBtn" class="btn btn-outline" style="border-color: #38bdf8; color: #38bdf8;">Download Excel</button>
             <button id="logoutBtn" class="btn btn-outline">Logout</button>
         </div>
     </nav>
 
-    <div class="container">
+    <div class="container" style="max-width: 100%;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
             <h1>Extracted Student Results</h1>
             <button id="refreshResultsBtn" class="btn btn-primary">Refresh Data</button>
         </div>
         
-        <div class="glass" style="padding: 1.5rem;">
+        <div class="glass" style="padding: 1rem; overflow: auto;">
             <div id="resultsLoader" class="loader"></div>
             
             <div id="resultsError" class="text-error hidden text-center" style="color: var(--error);">
@@ -34,16 +35,19 @@
             </div>
 
             <div class="table-container hidden" id="resultsTableContainer">
-                <table id="resultsTable">
+                <table id="resultsTable" class="mdm-table" style="font-size: 0.8rem;">
                     <thead>
-                        <tr>
-                            <th>PRN</th>
-                            <th>Name</th>
-                            <th>Department</th>
-                            <th>Semester</th>
-                            <th>Total Marks</th>
-                            <th>Percentage</th>
-                            <th>Status</th>
+                        <tr id="resultsHeaderRow1">
+                            <!-- Fixed: PRN, Name -->
+                            <th rowspan="2">PRN</th>
+                            <th rowspan="2">Name</th>
+                            <!-- Dynamic: Subject Names (colspan) -->
+                            <!-- Fixed: Total, % -->
+                            <th rowspan="2">OVERALL Total</th>
+                            <th rowspan="2">OVERALL %</th>
+                        </tr>
+                        <tr id="resultsHeaderRow2">
+                            <!-- Dynamic: Category headers (Score, Status) -->
                         </tr>
                     </thead>
                     <tbody id="resultsTableBody">
@@ -61,6 +65,7 @@
         }
         document.addEventListener('DOMContentLoaded', fetchResultsData);
         document.getElementById('refreshResultsBtn').addEventListener('click', fetchResultsData);
+        document.getElementById('downloadResultsExcelBtn').addEventListener('click', downloadResultsExcel);
     </script>
 </body>
 </html>

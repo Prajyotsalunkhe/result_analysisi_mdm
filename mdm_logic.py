@@ -36,8 +36,10 @@ def seat_allotment(df):
     }
 
     # Initialize seat allotment columns
-    df_sorted['Branch'] = ''
+    df_sorted['Allocated Minor'] = ''
     df_sorted['Seat Allotted'] = False
+    df_sorted['Preference Used'] = '-'
+    df_sorted['Status'] = 'WAITLISTED'
 
     # Keep track of how many seats have been allotted per branch
     allotted_counts = {branch: 0 for branch in seats.keys()}
@@ -47,11 +49,24 @@ def seat_allotment(df):
         # Extract the student's preferences from the row
         student_prefs = []
         for col in df_sorted.columns:
+            col_upper = col.strip().upper()
             val = str(df_sorted.at[i, col]).strip().upper()
-            if val.startswith("PREFERENCE"):
+            
+            # Case 1: Web format - Column is "PREFERENCE 1", Value is "CSE"
+            if col_upper.startswith("PREFERENCE"):
+                try:
+                    pref_num = int(col_upper.replace("PREFERENCE", "").strip())
+                    branch_key = map_column_to_branch(val)
+                    if branch_key:
+                        student_prefs.append((pref_num, branch_key))
+                except ValueError:
+                    continue
+            
+            # Case 2: Excel format - Column is "CSE", Value is "PREFERENCE 1"
+            elif val.startswith("PREFERENCE"):
                 try:
                     pref_num = int(val.replace("PREFERENCE", "").strip())
-                    if pref_num > 0:  # Ignore 'PREFERENCE 0'
+                    if pref_num > 0:
                         branch_key = map_column_to_branch(col)
                         if branch_key:
                             student_prefs.append((pref_num, branch_key))
@@ -61,11 +76,14 @@ def seat_allotment(df):
         # Sort preferences so we try 'PREFERENCE 1' first, then 'PREFERENCE 2', etc.
         student_prefs.sort(key=lambda x: x[0])
 
+
         # Try to allocate a seat based on ordered preferences
         for pref_num, desired_branch in student_prefs:
             if allotted_counts[desired_branch] < seats[desired_branch]:
-                df_sorted.at[i, 'Branch'] = desired_branch
+                df_sorted.at[i, 'Allocated Minor'] = desired_branch
                 df_sorted.at[i, 'Seat Allotted'] = True
+                df_sorted.at[i, 'Preference Used'] = f"PREFERENCE {pref_num}"
+                df_sorted.at[i, 'Status'] = 'ALLOCATED'
                 allotted_counts[desired_branch] += 1
                 break  # Stop checking further preferences once a seat is allotted
 

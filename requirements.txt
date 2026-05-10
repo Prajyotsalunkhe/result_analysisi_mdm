@@ -4,5 +4,6 @@ Flask-Login==0.6.3
 Werkzeug==3.0.3
 pandas
 pdfplumber
-google-generativeai
+google-genai
 python-dotenv
+ openpyxl

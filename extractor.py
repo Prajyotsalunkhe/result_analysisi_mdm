@@ -1,4 +1,5 @@
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 import os
 import json
 import base64
@@ -7,7 +8,10 @@ import re
 from dotenv import load_dotenv
 
 load_dotenv()
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+client = genai.Client(
+    api_key=os.getenv("GEMINI_API_KEY"),
+    http_options={'api_version': 'v1'}
+)
 
 def read_pdf_text(pdf_path):
     try:
@@ -124,14 +128,13 @@ def extract_result_data(pdf_path):
         
     print("Text extraction failed or incomplete. Falling back to Gemini extraction...")
     
-    model = genai.GenerativeModel('gemini-1.5-flash')
-    
     # Read the PDF file and prepare it for the API
     with open(pdf_path, "rb") as f:
         pdf_data = f.read()
     
     prompt = """
-    Analyze this university result sheet and extract all student information.
+    Analyze this university result sheet (it may be a scan or image). 
+    Extract all student information accurately.
     1. Identify: Full Name, PRN, Department (e.g. CSE, Mechanical), and Semester.
     2. Extract all subjects in a list. For each subject include: 
        - Subject Name
@@ -149,17 +152,17 @@ def extract_result_data(pdf_path):
     """
 
     try:
-        # Send the PDF data along with the prompt to Gemini
-        response = model.generate_content(
-            [
-                {"mime_type": "application/pdf", "data": base64.standard_b64encode(pdf_data).decode("utf-8")},
+        print(f"Sending request to Gemini (v2.0.0 SDK) for {os.path.basename(pdf_path)}...")
+        response = client.models.generate_content(
+            model='gemini-1.5-flash',
+            contents=[
+                types.Part.from_bytes(data=pdf_data, mime_type='application/pdf'),
                 prompt
-            ],
-            stream=False
+            ]
         )
         # Strip potential markdown formatting from Gemini response
         raw_text = response.text.replace('```json', '').replace('```', '').strip()
         return json.loads(raw_text)
     except Exception as e:
-        print(f"Extraction Error: {e}")
+        print(f"Extraction Error (Gemini): {e}")
         return None

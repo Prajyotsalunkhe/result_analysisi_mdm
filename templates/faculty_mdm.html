@@ -6,23 +6,130 @@
     <title>MDM Allocation</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/faculty_css/style.css">
+    <style>
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .summary-card {
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            color: white;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+        }
+        .summary-card:hover {
+            transform: translateY(-5px);
+        }
+        .summary-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .summary-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        .mdm-table {
+            border-radius: 12px;
+            overflow: hidden;
+            width: 100%;
+        }
+        .mdm-table thead th {
+            background: #5c6bc0;
+            color: white;
+            text-transform: none;
+            font-size: 0.85rem;
+            padding: 1rem;
+        }
+        .mdm-table tbody tr {
+            background: white;
+            color: #333;
+            border-bottom: 1px solid #eee;
+        }
+        .mdm-table tbody tr:hover {
+            background: #f8f9ff;
+        }
+        .mdm-table td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+        .prn-text {
+            font-weight: 700;
+            color: #1a237e;
+        }
+        .allotted-minor {
+            font-weight: 700;
+            color: #1a237e;
+        }
+        .status-badge {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .waitlisted-badge {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+        .section-title {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar glass" style="margin: 1rem; border-radius: 12px;">
         <a href="/faculty_dashboard" class="nav-brand">← Back to Dashboard</a>
-        <div style="font-weight: 600;">MDM Allocation</div>
-        <div>
+        <div style="font-weight: 600;">MDM Allocation System</div>
+        <div class="header-actions">
+            <button id="downloadExcelBtn" class="btn btn-outline" style="border-color: #38bdf8; color: #38bdf8;">Download Excel</button>
             <button id="logoutBtn" class="btn btn-outline">Logout</button>
         </div>
     </nav>
 
     <div class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-            <h1>MDM Preferences</h1>
-            <button id="refreshMdmBtn" class="btn btn-primary">Refresh Data</button>
+        <h2 class="section-title">Allocation Summary</h2>
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-label">Total Processed</div>
+                <div id="statTotal" class="summary-value">0</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Allocated</div>
+                <div id="statAllocated" class="summary-value">0</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Waitlisted</div>
+                <div id="statWaitlisted" class="summary-value">0</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Rejected</div>
+                <div id="statRejected" class="summary-value">0</div>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h2 class="section-title" id="tableTitle">Allocated Students (0)</h2>
+            <button id="refreshMdmBtn" class="btn btn-primary btn-sm" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Refresh Data</button>
         </div>
         
-        <div class="glass" style="padding: 1.5rem;">
+        <div class="glass" style="padding: 1.5rem; background: rgba(255, 255, 255, 0.05);">
             <div id="mdmLoader" class="loader"></div>
             
             <div id="mdmError" class="text-error hidden text-center" style="color: var(--error);">
@@ -34,10 +141,17 @@
             </div>
 
             <div class="table-container hidden" id="mdmTableContainer">
-                <table id="mdmTable">
+                <table id="mdmTable" class="mdm-table">
                     <thead>
-                        <tr id="mdmTableHead">
-                            <!-- Dynamic headers -->
+                        <tr>
+                            <th>PRN</th>
+                            <th>Name</th>
+                            <th>Marks</th>
+                            <th>Percentage</th>
+                            <th>Current Dept</th>
+                            <th>Allocated Minor</th>
+                            <th>Preference Used</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody id="mdmTableBody">
@@ -55,6 +169,7 @@
         }
         document.addEventListener('DOMContentLoaded', fetchMdmData);
         document.getElementById('refreshMdmBtn').addEventListener('click', fetchMdmData);
+        document.getElementById('downloadExcelBtn').addEventListener('click', downloadMdmExcel);
     </script>
 </body>
 </html>
